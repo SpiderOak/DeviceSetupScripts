@@ -1,17 +1,27 @@
-
-set _appout=%TEMP%/spiderout.txt
-set _setupfile=%TEMP%/setupfile.json
-
-set _domain=@foo.com
-
+:: Creates a device using the computer hostname.
+:: Path to SpiderOak. Replace "SpiderOak" with "SpiderOakBlue" if
+:: necessary.
 set _spideroak="C:\Program Files\SpiderOak\SpiderOak.exe"
 
+set _ouruser=%1
+set _ourpass=%2
+
+if defined 3 (
+    set _userext=%3
+)
+
+if defined _userext (
+    set _ouruser=%_ouruser%%_userext%
+)
+
+set _appout=%TEMP%\spiderout.txt
+set _setupfile=%TEMP%\setupfile.json
 :: First, let's try to install the device with the computer name.
 :: The following creates the result variable %_result%.
 call :installdev %COMPUTERNAME%
 
 :: The cases where we don't do the rename dance
-:: (successful device creation or non-name-collision failure)
+:: (successful device creation or non-name-collitypesion failure)
 if NOT %_result% EQU 1 (
     exit /B %_result%
 )
@@ -30,7 +40,7 @@ GOTO:eof
 :installdev
 SETLOCAL
 SET _devname=%1
-echo {"username":"matttest","password":"matttest","device_name":"%_devname%","reinstall":false} > %_setupfile%
+echo {"username":"%_ouruser%","password":"%_ourpass%","device_name":"%_devname%","reinstall":false} > %_setupfile%
 
 echo Setting up SpiderOak as device %_devname%...
 %_spideroak% --setup=%_setupfile% > %_appout%
@@ -50,7 +60,7 @@ if %ERRORLEVEL% EQU 0 (
 )
 
 :: Didn't setup the device & didn't find device name already exists.
-ENDLOCAL & SET_result=2
+ENDLOCAL & SET _result=2
 GOTO:eof
 
 :: Gets the device ID from a device number.
@@ -60,7 +70,7 @@ GOTO:eof
 %_spideroak% --userinfo > %_appout%
 SETLOCAL
 SET _devname=%1
-for /f "tokens=1,2 delims=#" %a in ('findstr /r "%_devname%" %_appout%') do set _=%a&set _devnum=%b
+for /f "tokens=1,2 delims=#" %a in ('findstr "%_devname%" %_appout%') do set _=%a&set _devnum=%b
 
 ENDLOCAL & SET _devnum=%_devnum:)=%
 GOTO:eof
