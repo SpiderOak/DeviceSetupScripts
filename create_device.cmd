@@ -67,10 +67,13 @@ GOTO:eof
 :: Expects the name of the device as a parameter.
 :: Sets %_devnum% as a variable after being run.
 :devnumForName
-%_spideroak% --userinfo > %_appout%
 SETLOCAL
 SET _devname=%1
-for /f "tokens=1,2 delims=#" %a in ('findstr "%_devname%" %_appout%') do set _=%a&set _devnum=%b
+%_spideroak% --userinfo > %_appout%
+
+echo %_devname%
+echo %_appout%
+for /f "tokens=2 delims=#" %%a in ('findstr /R "%_devname%[^-]" "%_appout%"') do set _devnum=%%a
 
 ENDLOCAL & SET _devnum=%_devnum:)=%
 GOTO:eof
@@ -97,6 +100,6 @@ SET _newdev=%2
 :: Get the device ID we want to use.
 CALL :devnumForName %_olddev%
 
-%_spideroak% -D %_devnum% --rename-device=%_newdev%
+%_spideroak% -d %_devnum% --rename-device=%_newdev%
 ENDLOCAL
 GOTO :eof
