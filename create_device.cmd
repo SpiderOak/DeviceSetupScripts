@@ -1,3 +1,4 @@
+@ECHO OFF
 :: Creates a device using the computer hostname.
 :: Path to SpiderOak. Replace "SpiderOak" with "SpiderOakBlue" if
 :: necessary.
@@ -23,8 +24,11 @@ call :installdev %COMPUTERNAME%
 :: The cases where we don't do the rename dance
 :: (successful device creation or non-name-collitypesion failure)
 if NOT %_result% EQU 1 (
+    ECHO Script complete.
     exit /B %_result%
 )
+
+ECHO Renaming devices to fit.
    
 :: If we've gotten here, we need to do some renaming
 call :olddevname %COMPUTERNAME%
@@ -32,7 +36,7 @@ call :installdev %COMPUTERNAME%-new
 call :renamedev %COMPUTERNAME% %_newolddevname%
 call :renamedev %COMPUTERNAME%-new %COMPUTERNAME%
 
-
+ECHO Script complete.
 GOTO:eof
 :: This is the end of the main code! Subroutines follow.
 
@@ -42,13 +46,14 @@ SETLOCAL
 SET _devname=%1
 echo {"username":"%_ouruser%","password":"%_ourpass%","device_name":"%_devname%","reinstall":false} > %_setupfile%
 
-echo Setting up SpiderOak as device %_devname%...
+echo Setting up SpiderOak as device %_devname% (this may take a while)...
 %_spideroak% --setup=%_setupfile% > %_appout%
 
 :: Check our output. Did we run OK?
 find "batchmode run complete: shutting down" %_appout%
 if %ERRORLEVEL% EQU 0 (
     ENDLOCAL & SET _result=0
+    ECHO Device setup OK
     GOTO:eof
 )
 
@@ -56,11 +61,13 @@ if %ERRORLEVEL% EQU 0 (
 find  "Device name already exists" %_appout%
 if %ERRORLEVEL% EQU 0 (
     ENDLOCAL & SET _result=1
+    ECHO Device already exists
     GOTO:eof
 )
 
 :: Didn't setup the device & didn't find device name already exists.
 ENDLOCAL & SET _result=2
+ECHO Error in setup
 GOTO:eof
 
 :: Gets the device ID from a device number.
@@ -99,6 +106,8 @@ SET _olddev=%1
 SET _newdev=%2
 :: Get the device ID we want to use.
 CALL :devnumForName %_olddev%
+
+ECHO Renaming %_olddev% to %_newdev%
 
 %_spideroak% -d %_devnum% --rename-device=%_newdev%
 ENDLOCAL
