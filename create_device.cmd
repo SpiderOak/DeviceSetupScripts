@@ -1,8 +1,8 @@
 @ECHO OFF
 :: Creates a device using the computer hostname.
-:: Path to SpiderOak. Replace "SpiderOak" with "SpiderOakBlue" if
-:: necessary.
-set _spideroak="C:\Program Files\SpiderOak\SpiderOak.exe"
+:: Path to SpiderOak. Replace "SpiderOakBlue" with "SpiderOak" if
+:: necessary for the consumer product..
+set _spideroak="C:\Program Files\SpiderOakBlue\SpiderOakBlue.exe"
 
 set _ouruser=%1
 set _ourpass=%2
