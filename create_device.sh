@@ -5,7 +5,11 @@
 
 function installdev
 {
-    echo "{\"username\": \"$OURUSER\",\"password\": \"$OURPASS\",\"device_name\": \"$1\",\"reinstall\": false}">$SETUPFILE
+    if [[ $FP == 0 ]]; then
+        echo "{\"username\": \"$OURUSER\",\"password\": \"$OURPASS\",\"device_name\": \"$1\",\"reinstall\": false}">$SETUPFILE
+    else
+        echo "{\"username\": \"$OURUSER\",\"password\": \"$OURPASS\",\"device_name\": \"$1\",\"fingerprint\": \"$FINGERPRINT\",\"reinstall\": false}">$SETUPFILE
+    fi
     echo "Setting up SpiderOak as device $1 (this may take a while)..."
     $SPIDEROAK --setup=$SETUPFILE > $APPOUT
     
@@ -32,6 +36,7 @@ function devnumForName
 {
     $SPIDEROAK --userinfo > $APPOUT
     DEVNUM=`cat $APPOUT | grep "$1 on" | grep -v "(REMOVED)" | grep -oP '(?<=#)[0-9]+'`
+    echo $DEVNUM
 }
 
 ## Creates the old device name
@@ -66,15 +71,34 @@ else
 	SPIDEROAK="/Applications/SpiderOak.app/Contents/MacOS/SpiderOak"
 fi
 
-OURUSER=$1
-OURPASS=$2
-
-if [[ -z "$3" ]]; then
-    OURUSER+="$3"
-fi
-
+## Set variables
 APPOUT="/tmp/spiderout.txt"
 SETUPFILE="/tmp/setupfile.json"
+FINGERPRINT=""
+FP=0
+
+while getopts ":u:p:s:f:" opt; do
+    case $opt in
+        u) 
+            OURUSER=$OPTARG;;
+        p) 
+            OURPASS=$OPTARG;;
+        s) 
+            OURUSER+="$OPTARG";;
+        f)
+            FP=1
+            FINGERPRINT=$OPTARG
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument." >&2
+            exit 1
+            ;;
+    esac
+done
 
 ## Try to install the device using the hostname.
 ## The following sets the $RESULT variable.
