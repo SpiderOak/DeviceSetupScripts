@@ -65,10 +65,38 @@ function renamedev
 SYSTEM=`uname`
 
 ## Set path to SpiderOak
+SPIDEROAK=""
+
 if [[ $SYSTEM == 'Linux' ]]; then
-	SPIDEROAK="/usr/bin/SpiderOak"
+    FILELIST=("/usr/bin/SpiderOak" "/usr/bin/SpiderOakBlue")
+    for f in $FILELIST
+    do
+	    if [[ -f $f ]]; then
+	        SPIDEROAK=$f
+	        echo "Found the SpiderOak executable here: $f"
+	    else
+	        :
+	    fi
+	done
 else
-	SPIDEROAK="/Applications/SpiderOak.app/Contents/MacOS/SpiderOak"
+    FILELIST=("/Applications/SpiderOak.app/Contents/MacOS/SpiderOak"
+        "/Applications/SpiderOakBlue.app/Contents/MacOS/SpiderOakBlue")
+    for f in $FILELIST
+    do
+        if [[ -f $f ]]; then
+            SPIDEROAK=$f
+            echo "Found the SpiderOak executable here: $f"
+        else
+            :
+        fi
+    done
+fi
+
+if [[ $SPIDEROAK == "" ]]; then
+    echo "Could not find SpiderOak executable!"
+    exit 1
+else
+    :
 fi
 
 ## Set variables
