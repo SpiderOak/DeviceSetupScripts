@@ -68,20 +68,18 @@ SYSTEM=`uname`
 SPIDEROAK=""
 
 if [[ $SYSTEM == 'Linux' ]]; then
-    FILELIST=("/usr/bin/SpiderOak" "/usr/bin/SpiderOakBlue")
-    for f in $FILELIST
+    FILELIST=("/usr/bin/SpiderOakBlue" "/usr/bin/SpiderOak")
+    for f in "${FILELIST[@]}"
     do
 	    if [[ -f $f ]]; then
 	        SPIDEROAK=$f
 	        echo "Found the SpiderOak executable here: $f"
-	    else
-	        :
 	    fi
 	done
 else
     FILELIST=("/Applications/SpiderOak.app/Contents/MacOS/SpiderOak"
         "/Applications/SpiderOakBlue.app/Contents/MacOS/SpiderOakBlue")
-    for f in $FILELIST
+    for f in "${FILELIST[@]}"
     do
         if [[ -f $f ]]; then
             SPIDEROAK=$f
