@@ -6,9 +6,10 @@ set _spideroak="C:\Program Files\SpiderOakBlue\SpiderOakBlue.exe"
 
 set _ouruser=%1
 set _ourpass=%2
+set _fingerprint=%3
 
-if defined 3 (
-    set _userext=%3
+if defined 4 (
+    set _userext=%4
 )
 
 if defined _userext (
@@ -44,7 +45,7 @@ GOTO:eof
 :installdev
 SETLOCAL
 SET _devname=%1
-echo {"username":"%_ouruser%","password":"%_ourpass%","device_name":"%_devname%","reinstall":false} > %_setupfile%
+echo {"username":"%_ouruser%","password":"%_ourpass%","device_name":"%_devname%","fingerprint":%_fingerprint%,"reinstall":false} > %_setupfile%
 
 echo Setting up SpiderOak as device %_devname% (this may take a while)...
 %_spideroak% --setup=%_setupfile% > %_appout%
