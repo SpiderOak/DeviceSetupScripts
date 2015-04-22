@@ -5,12 +5,9 @@ Scripts to setup a device automatically, using the hostname as the device name.
 
 These scripts expect two arguments, and an optional third argument:
 
-    create_device.[cmd|sh] <username> <password> [<username suffix>]
+    create_device.[cmd|sh] <username> <password> "<fingerprint>" [<username suffix>]
 
-Username and password are the username and password for the SpiderOak
-account. If you are using an environment where the authentication
-username might require a suffix (such as AD environments for SpiderOak
-Blue), you can set the suffix as the third argument.
+Username and password are the username and password for the SpiderOak account. Fingerprint is the fingerprint located on the OMVA at Manage > Fingerprint. If you are using an environment where the authentication username might require a suffix (such as AD environments for SpiderOakBlue), you can set the suffix as the fourth argument.
 
 This will attempt to create a device using the user credentials using the name of the computer as reported by `%COMPUTERNAME%` on Windows and `$HOST` on *nix.
 
